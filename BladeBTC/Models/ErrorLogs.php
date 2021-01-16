@@ -1,8 +1,10 @@
 <?php
 
-namespace BladeBTC\Models;
+namespace BladeBTC\GUI\Models;
 
-use BladeBTC\Helpers\Database;
+use BladeBTC\GUI\Helpers\Database;
+use BladeBTC\GUI\Helpers\Session;
+use DebugBar\DataCollector\PDO\TraceablePDOStatement;
 use Exception;
 
 /**
@@ -12,6 +14,27 @@ use Exception;
  */
 class ErrorLogs
 {
+
+    /**
+     * Get all error log
+     *
+     * @param bool $include_deleted
+     *
+     * @return bool|TraceablePDOStatement
+     */
+    public static function getAll($include_deleted = false)
+    {
+        $db = Database::get();
+
+        if ($include_deleted) {
+            $errors = $db->query("SELECT * FROM error_logs");
+        }
+        else {
+            $errors = $db->query("SELECT * FROM error_logs WHERE deleted = 0");
+        }
+
+        return $errors;
+    }
 
     /**
      * Log an error
@@ -54,5 +77,60 @@ class ErrorLogs
             $db->rollBack();
             throw new Exception($e->getMessage());
         }
+    }
+
+    /**
+     * Delete an error line
+     *
+     * @param $error_line
+     *
+     * @throws Exception
+     */
+    public static function delete($error_line)
+    {
+
+        $db = Database::get();
+
+        $query = "	UPDATE 
+						error_logs 
+					SET 
+						deleted = 1,
+					    deleted_account_id = :deleted_account_id,
+					    deleted_date = NOW()
+					WHERE 
+						id = :id";
+
+        $sth = $db->prepare($query);
+
+        $sth->execute([
+            "id" => $error_line,
+            "deleted_account_id" => Session::get("account_id"),
+        ]);
+    }
+
+    /**
+     * Clear all error lines
+     *
+     * @throws Exception
+     */
+    public static function clear()
+    {
+
+        $db = Database::get();
+
+        $query = "	UPDATE 
+						error_logs 
+					SET 
+						deleted = 1,
+					    deleted_account_id = :deleted_account_id,
+					    deleted_date = NOW()
+					WHERE 
+						deleted = 0";
+
+        $sth = $db->prepare($query);
+
+        $sth->execute([
+            "deleted_account_id" => Session::get("account_id"),
+        ]);
     }
 }
