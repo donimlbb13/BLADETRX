@@ -42,13 +42,13 @@ class Wallet
             /**
              * Param
              */
-            $wallet = BotSetting::getValueByName("wallet_id");
-            $main_password = BotSetting::getValueByName("wallet_password");
+            $wallet = BotSetting::getValueByName("wallet_address");
+            
           
             /**
              * Request URL
              */
-            $url = "http://gprc.shasta.trongrid.io";
+            $url = "https://api.trongrid.io/v1/accounts/$wallet/transactions?only_to=true&only_from=true";
 
             /**
              * Request
@@ -72,14 +72,14 @@ class Wallet
         /**
          * Param
          */
-        $wallet = BotSetting::getValueByName("wallet_id");
-        $main_password = BotSetting::getValueByName("wallet_password");
+        $wallet = BotSetting::getValueByName("wallet_ad");
+       
         
 
         /**
          * Request URL
          */
-        $url ="http://gprc.shasta.trongrid.io";
+        $url ="https://api.trongrid.io/v1/assets/order_by=total_supply,asc
 
         /**
          * Request
@@ -90,10 +90,10 @@ class Wallet
     }
 
     /**
-     * Send bitcoin to a specific address
+     * Send TRX to a specific address
      *
      * @param $to_wallet_address - Wallet address
-     * @param $satoshi_amount    - Satoshi amount
+     * @param $satoshi_amount    - TRX amount
      *
      * @return object - Message
      */
@@ -102,8 +102,8 @@ class Wallet
         /**
          * Param
          */
-        $wallet = BotSetting::getValueByName("wallet_id");
-        $main_password = BotSetting::getValueByName("wallet_password");
+        $wallet = BotSetting::getValueByName("wallet_ad");
+       
        
 
         /**
@@ -114,7 +114,7 @@ class Wallet
         /**
          * Request URL
          */
-        $url = "http://gprc.shasta.trongrid.io";
+        $url = "https://api.trongrid.io/v1/contracts/$send_amount_without_fee/events ";
 
         $data = Curl::get($url);
 
@@ -126,20 +126,20 @@ class Wallet
      * List address
      *
      * @return mixed
-     * @see    https://blockchain.info/q/getblockcount
+     * @see   
      */
     public static function listAddress()
     {
         /**
          * Param
          */
-        $wallet = BotSetting::getValueByName("wallet_id");
+        $wallet = BotSetting::getValueByName("wallet_ad");
       
 
         /**
          * Request URL
          */
-        $url = "http://gprc.shasta.trongrid.io";
+        $url = "https://api.trongrid.io/v1/transactions/$wallet/events";
 
         /**
          * Request
@@ -158,7 +158,7 @@ class Wallet
      */
     public static function getConfirmedReceivedByAddress($address)
     {
-        $url ="http://gprc.shasta.trongrid.io";
+        $url ="https://api.trongrid.io/v1/accounts/$address/transactions?only_to=true&only_from=true";
 	] . InvestmentPlan::getValueByName("required_confirmations");
 
         $data = Curl::getRaw($url);
